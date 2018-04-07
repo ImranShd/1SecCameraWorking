@@ -1,9 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    >
-    <SurfaceView android:id="@+id/CameraView" android:layout_width="fill_parent" android:layout_height="fill_parent"></SurfaceView>
-</LinearLayout>
+    android:weightSum="1">
+    <SurfaceView android:id="@+id/CameraView"
+        android:layout_width="match_parent"
+        android:layout_height="444dp"
+        android:layout_weight="0.38"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentTop="true"></SurfaceView>
+    <Button
+        android:id = "@+id/RecordingButton"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@layout/round_button"
+        android:gravity="center_vertical|center_horizontal"
+        android:text="hello"
+        android:textColor="#fff"
+        android:layout_gravity="center_horizontal"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
+</RelativeLayout>
 

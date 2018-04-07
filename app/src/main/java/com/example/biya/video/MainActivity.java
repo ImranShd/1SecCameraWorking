@@ -11,6 +11,7 @@ import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.SurfaceHolder;
@@ -19,6 +20,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.View.OnClickListener;
+import android.widget.Button;
 
 public class MainActivity extends Activity implements OnClickListener, SurfaceHolder.Callback {
 
@@ -28,12 +30,12 @@ public class MainActivity extends Activity implements OnClickListener, SurfaceHo
     private SurfaceHolder holder;
     private CamcorderProfile camcorderProfile;
     private Camera camera;
-
-
+    public Button recordingButton;
 
     boolean recording = false;
     boolean usecamera = true;
     boolean previewRunning = false;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -55,13 +57,13 @@ public class MainActivity extends Activity implements OnClickListener, SurfaceHo
         setContentView(R.layout.activity_main);
 
         SurfaceView cameraView = (SurfaceView) findViewById(R.id.CameraView);
+        recordingButton = (Button) findViewById(R.id.RecordingButton);
         holder = cameraView.getHolder();
         holder.addCallback(this);
         holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
 
-        cameraView.setClickable(true);
-        cameraView.setOnClickListener(this);
-
+        cameraView.setClickable(false);
+        recordingButton.setOnClickListener(this);
     }
 
     private void prepareRecorder() {
@@ -107,6 +109,19 @@ public class MainActivity extends Activity implements OnClickListener, SurfaceHo
     }
 
     public void onClick(View v) {
+
+        recordingButton.setEnabled(false);  //Button Disabled Command Here On Click
+        Log.d("Button Disabled", "Button Disabled Ok");
+        new Handler().postDelayed(new Runnable(){
+
+            @Override
+            public void run(){
+                recordingButton.setEnabled(true);
+                Log.d("Button Enabled", "Button Enabled Ok");
+            }
+        }, 2000);   //Resets Button Active after 2 secs;
+
+
         if (recording) {
             recorder.stop();
             if (usecamera) {
@@ -193,4 +208,6 @@ public class MainActivity extends Activity implements OnClickListener, SurfaceHo
         }
         finish();
     }
+
+
 }
