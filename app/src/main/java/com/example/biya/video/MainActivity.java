@@ -112,34 +112,38 @@ public class MainActivity extends Activity implements OnClickListener, SurfaceHo
 
         recordingButton.setEnabled(false);  //Button Disabled Command Here On Click
         Log.d("Button Disabled", "Button Disabled Ok");
+        recorder.start();
+        Log.d("Recording Started", "Button recording Must Have started now for 1 sec");
         new Handler().postDelayed(new Runnable(){
 
             @Override
             public void run(){
                 recordingButton.setEnabled(true);
                 Log.d("Button Enabled", "Button Enabled Ok");
+                recorder.stop();
+                Log.d("Recording Stopped", "Recording must have Stopped at this point");
+
+                //recorder.start();
+                //Log.v(LOGTAG, "Recording Started");
             }
-        }, 2000);   //Resets Button Active after 2 secs;
+        }, 1000);   //Resets Button Active after 2 secs;
 
 
         if (recording) {
-            recorder.stop();
             if (usecamera) {
-                try {
-                    camera.reconnect();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+               // try {
+                 //   camera.reconnect();
+                //} catch (IOException e) {
+                 //   e.printStackTrace();
+               // }
             }
             // recorder.release();
-            recording = false;
-            Log.v(LOGTAG, "Recording Stopped");
+           // recording = false;
+           // Log.v(LOGTAG, "Recording Stopped");
             // Let's prepareRecorder so we can record again
-            prepareRecorder();
+           // prepareRecorder();
         } else {
-            recording = true;
-            recorder.start();
-            Log.v(LOGTAG, "Recording Started");
+            //recording = true;
         }
     }
 
