@@ -126,7 +126,7 @@ public class MainActivity extends Activity implements OnClickListener, SurfaceHo
                 //recorder.start();
                 //Log.v(LOGTAG, "Recording Started");
             }
-        }, 1000);   //Resets Button Active after 2 secs;
+        }, 1000);   //Resets Button Active after 1 secs;
 
 
         if (recording) {
