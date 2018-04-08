@@ -1,3 +1,5 @@
+
+//Master Password: Galaxy11
 package com.example.biya.video;
 
 import java.io.File;
@@ -42,7 +44,6 @@ public class MainActivity extends Activity implements OnClickListener, SurfaceHo
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-
         fileCheck = 0;
         super.onCreate(savedInstanceState);
 
@@ -50,18 +51,19 @@ public class MainActivity extends Activity implements OnClickListener, SurfaceHo
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER_PORTRAIT);
 
         WindowManager.LayoutParams lp = getWindow().getAttributes();
         lp.screenBrightness = 1000;
         getWindow().setAttributes(lp);
 
-        camcorderProfile = CamcorderProfile.get(CamcorderProfile.QUALITY_480P);
+        camcorderProfile = CamcorderProfile.get(CamcorderProfile.QUALITY_HIGH);
 
 
         setContentView(R.layout.activity_main);
 
         SurfaceView cameraView = (SurfaceView) findViewById(R.id.CameraView);
+
         recordingButton = (Button) findViewById(R.id.RecordingButton);
         holder = cameraView.getHolder();
         holder.addCallback(this);
@@ -73,18 +75,16 @@ public class MainActivity extends Activity implements OnClickListener, SurfaceHo
 
     private void prepareRecorder() {
         recorder = new MediaRecorder();
-        recorder.setPreviewDisplay(holder.getSurface());
-
-        if (usecamera) {
-            camera.unlock();
-            recorder.setCamera(camera);
-        }
-
+        camera.unlock();
+        recorder.setCamera(camera);
 
         recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         recorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
 
         recorder.setProfile(camcorderProfile);
+        recorder.setPreviewDisplay(holder.getSurface());
+        recorder.setVideoEncodingBitRate(3000000);
+
 
         // This is all very sloppy
        // if (camcorderProfile.fileFormat == MediaRecorder.OutputFormat.MPEG_4)
@@ -109,6 +109,8 @@ public class MainActivity extends Activity implements OnClickListener, SurfaceHo
         }
         //recorder.setMaxDuration(50000); // 50 seconds
         //recorder.setMaxFileSize(5000000); // Approximately 5 megabytes
+
+
 
         try {
             recorder.prepare();
@@ -170,6 +172,8 @@ public class MainActivity extends Activity implements OnClickListener, SurfaceHo
 
         if (usecamera) {
             camera = Camera.open();
+            camera.setDisplayOrientation(90);
+
 
             try {
                 camera.setPreviewDisplay(holder);
