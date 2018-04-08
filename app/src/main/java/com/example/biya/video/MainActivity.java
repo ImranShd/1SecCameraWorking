@@ -7,6 +7,7 @@ import java.security.Policy;
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
 import android.hardware.Camera;
+import android.hardware.camera2.CameraAccessException;
 import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
 import android.os.Bundle;
@@ -35,10 +36,12 @@ public class MainActivity extends Activity implements OnClickListener, SurfaceHo
     boolean recording = false;
     boolean usecamera = true;
     boolean previewRunning = false;
+    public int fileCheck;
 
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        fileCheck = 0;
         super.onCreate(savedInstanceState);
 
         requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -51,7 +54,7 @@ public class MainActivity extends Activity implements OnClickListener, SurfaceHo
         lp.screenBrightness = 1000;
         getWindow().setAttributes(lp);
 
-        camcorderProfile = CamcorderProfile.get(CamcorderProfile.QUALITY_720P);
+        camcorderProfile = CamcorderProfile.get(CamcorderProfile.QUALITY_480P);
 
 
         setContentView(R.layout.activity_main);
@@ -76,8 +79,8 @@ public class MainActivity extends Activity implements OnClickListener, SurfaceHo
         }
 
 
-        recorder.setAudioSource(MediaRecorder.AudioSource.DEFAULT);
-        recorder.setVideoSource(MediaRecorder.VideoSource.DEFAULT);
+        recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+        recorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
 
         recorder.setProfile(camcorderProfile);
 
@@ -85,7 +88,8 @@ public class MainActivity extends Activity implements OnClickListener, SurfaceHo
        // if (camcorderProfile.fileFormat == MediaRecorder.OutputFormat.MPEG_4)
         {
             try {
-                File newFile = File.createTempFile("videocapture", ".mp4", Environment.getExternalStorageDirectory());
+                fileCheck++;
+                File newFile = File.createTempFile("videocapture"+fileCheck, ".mp4", Environment.getExternalStorageDirectory());
                // recorder.setVideoFrameRate(100);
                 recorder.setOutputFile(newFile.getAbsolutePath());
             } catch (IOException e) {
@@ -110,6 +114,7 @@ public class MainActivity extends Activity implements OnClickListener, SurfaceHo
 
     public void onClick(View v) {
 
+        prepareRecorder();
         recordingButton.setEnabled(false);  //Button Disabled Command Here On Click
         Log.d("Button Disabled", "Button Disabled Ok");
         recorder.start();
@@ -120,13 +125,17 @@ public class MainActivity extends Activity implements OnClickListener, SurfaceHo
             public void run(){
                 recordingButton.setEnabled(true);
                 Log.d("Button Enabled", "Button Enabled Ok");
-                recorder.stop();
+
+                recorder.stop();     // stop recording
+                recorder.reset();    // set state to idle
+                recorder.release();  // release resources back to the system
+                recorder = null;
                 Log.d("Recording Stopped", "Recording must have Stopped at this point");
 
                 //recorder.start();
                 //Log.v(LOGTAG, "Recording Started");
             }
-        }, 1000);   //Resets Button Active after 1 secs;
+        }, 2000);   //Resets Button Active after 1 secs;
 
 
         if (recording) {
@@ -193,7 +202,7 @@ public class MainActivity extends Activity implements OnClickListener, SurfaceHo
                 e.printStackTrace();
             }
 
-            prepareRecorder();
+           // prepareRecorder();
         }
     }
 
@@ -204,7 +213,7 @@ public class MainActivity extends Activity implements OnClickListener, SurfaceHo
             recorder.stop();
             recording = false;
         }
-        recorder.release();
+       // recorder.release();
         if (usecamera) {
             previewRunning = false;
             //camera.lock();
