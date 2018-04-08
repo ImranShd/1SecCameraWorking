@@ -23,6 +23,8 @@ import android.view.WindowManager;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 
+import com.googlecode.mp4parser.authoring.Movie;
+
 public class MainActivity extends Activity implements OnClickListener, SurfaceHolder.Callback {
 
     public static final String LOGTAG = "VIDEOCAPTURE";
@@ -38,9 +40,9 @@ public class MainActivity extends Activity implements OnClickListener, SurfaceHo
     boolean previewRunning = false;
     public int fileCheck;
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
+
         fileCheck = 0;
         super.onCreate(savedInstanceState);
 
@@ -89,8 +91,15 @@ public class MainActivity extends Activity implements OnClickListener, SurfaceHo
         {
             try {
                 fileCheck++;
-                File newFile = File.createTempFile("videocapture"+fileCheck, ".mp4", Environment.getExternalStorageDirectory());
-               // recorder.setVideoFrameRate(100);
+                File directory = new File(Environment.getExternalStorageDirectory()+File.separator+"1SecApp");
+                if(!directory.exists())
+                    directory.mkdirs();
+
+//                File newFile = File.createTempFile("videocapture"+fileCheck, ".mp4", Environment.getExternalStorageDirectory()+"");
+
+                File newFile = File.createTempFile("videocapture"+fileCheck, ".mp4", directory);
+
+                // recorder.setVideoFrameRate(100);
                 recorder.setOutputFile(newFile.getAbsolutePath());
             } catch (IOException e) {
                 Log.v(LOGTAG,"Couldn't create file");
