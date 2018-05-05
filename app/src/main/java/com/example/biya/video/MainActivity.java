@@ -42,7 +42,7 @@ public class MainActivity extends Activity implements OnClickListener, SurfaceHo
 
     public static final String LOGTAG = "VIDEOCAPTURE";
     public static final String TAG = "VIDEOCAPTURE";
-private Mp4ParserWrapper mp4ParserWrapper;
+
     private MediaRecorder recorder;
     private SurfaceHolder holder;
     private CamcorderProfile camcorderProfile;
