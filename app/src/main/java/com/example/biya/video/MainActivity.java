@@ -25,23 +25,23 @@ import android.view.WindowManager;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 
-import com.googlecode.mp4parser.authoring.Movie;
+//import com.googlecode.mp4parser.authoring.Movie;
 
 public class MainActivity extends Activity implements OnClickListener, SurfaceHolder.Callback {
 
     public static final String LOGTAG = "VIDEOCAPTURE";
-
+private Mp4ParserWrapper mp4ParserWrapper;
     private MediaRecorder recorder;
     private SurfaceHolder holder;
     private CamcorderProfile camcorderProfile;
     private Camera camera;
     public Button recordingButton;
-
+    public Button mergeButton;
     boolean recording = false;
     boolean usecamera = true;
     boolean previewRunning = false;
     public int fileCheck;
-
+public Button merge;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         fileCheck = 0;
@@ -65,12 +65,16 @@ public class MainActivity extends Activity implements OnClickListener, SurfaceHo
         SurfaceView cameraView = (SurfaceView) findViewById(R.id.CameraView);
 
         recordingButton = (Button) findViewById(R.id.RecordingButton);
+        mergeButton = (Button) findViewById(R.id.MergeButton);
         holder = cameraView.getHolder();
         holder.addCallback(this);
         holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
 
         cameraView.setClickable(false);
         recordingButton.setOnClickListener(this);
+        mergeButton.setOnClickListener(this);
+
+
     }
 
     private void prepareRecorder() {
@@ -125,46 +129,42 @@ public class MainActivity extends Activity implements OnClickListener, SurfaceHo
 
     public void onClick(View v) {
 
-        prepareRecorder();
-        recordingButton.setEnabled(false);  //Button Disabled Command Here On Click
-        Log.d("Button Disabled", "Button Disabled Ok");
-        recorder.start();
-        Log.d("Recording Started", "Button recording Must Have started now for 1 sec");
-        new Handler().postDelayed(new Runnable(){
-
-            @Override
-            public void run(){
-                recordingButton.setEnabled(true);
-                Log.d("Button Enabled", "Button Enabled Ok");
-
-                recorder.stop();     // stop recording
-                recorder.reset();    // set state to idle
-                recorder.release();  // release resources back to the system
-                recorder = null;
-                Log.d("Recording Stopped", "Recording must have Stopped at this point");
-
-                //recorder.start();
-                //Log.v(LOGTAG, "Recording Started");
-            }
-        }, 2000);   //Resets Button Active after 1 secs;
+        if(v.getId() == R.id.MergeButton)
+        {
 
 
-        if (recording) {
-            if (usecamera) {
-               // try {
-                 //   camera.reconnect();
-                //} catch (IOException e) {
-                 //   e.printStackTrace();
-               // }
-            }
-            // recorder.release();
-           // recording = false;
-           // Log.v(LOGTAG, "Recording Stopped");
-            // Let's prepareRecorder so we can record again
-           // prepareRecorder();
-        } else {
-            //recording = true;
+
         }
+        else
+        {
+            prepareRecorder();
+            recordingButton.setEnabled(false);  //Button Disabled Command Here On Click
+            Log.d("Button Disabled", "Button Disabled Ok");
+            recorder.start();
+            Log.d("Recording Started", "Button recording Must Have started now for 1 sec");
+            new Handler().postDelayed(new Runnable() {
+
+                @Override
+                public void run() {
+                    recordingButton.setEnabled(true);
+                    Log.d("Button Enabled", "Button Enabled Ok");
+
+                    recorder.stop();     // stop recording
+                    recorder.reset();    // set state to idle
+                    recorder.release();  // release resources back to the system
+                    recorder = null;
+                    Log.d("Recording Stopped", "Recording must have Stopped at this point");
+
+                    //recorder.start();
+                    //Log.v(LOGTAG, "Recording Started");
+                }
+            }, 2000);   //Resets Button Active after 1 secs;
+
+        }
+
+
+
+
     }
 
     public void surfaceCreated(SurfaceHolder holder) {
