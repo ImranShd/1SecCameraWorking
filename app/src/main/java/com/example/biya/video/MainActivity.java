@@ -4,7 +4,11 @@ package com.example.biya.video;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.nio.channels.FileChannel;
 import java.security.Policy;
+import java.util.LinkedList;
+import java.util.List;
 
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
@@ -25,11 +29,19 @@ import android.view.WindowManager;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 
+import com.coremedia.iso.boxes.Container;
+import com.googlecode.mp4parser.authoring.Movie;
+import com.googlecode.mp4parser.authoring.Track;
+import com.googlecode.mp4parser.authoring.builder.DefaultMp4Builder;
+import com.googlecode.mp4parser.authoring.container.mp4.MovieCreator;
+import com.googlecode.mp4parser.authoring.tracks.AppendTrack;
+
 //import com.googlecode.mp4parser.authoring.Movie;
 
 public class MainActivity extends Activity implements OnClickListener, SurfaceHolder.Callback {
 
     public static final String LOGTAG = "VIDEOCAPTURE";
+    public static final String TAG = "VIDEOCAPTURE";
 private Mp4ParserWrapper mp4ParserWrapper;
     private MediaRecorder recorder;
     private SurfaceHolder holder;
@@ -41,6 +53,8 @@ private Mp4ParserWrapper mp4ParserWrapper;
     boolean usecamera = true;
     boolean previewRunning = false;
     public int fileCheck;
+    int count =0;
+
 public Button merge;
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -132,7 +146,25 @@ public Button merge;
         if(v.getId() == R.id.MergeButton)
         {
 
+            Log.d("Button Disabled", "you click textview");
+            String video1 = Environment.getExternalStorageDirectory() + "/1SecApp/aa.mp4";
+            String video2 = Environment.getExternalStorageDirectory() + "/1SecApp/bb.mp4";
+            String video3 = Environment.getExternalStorageDirectory() + "/1SecApp/cc.mp4";
+            String video4 = Environment.getExternalStorageDirectory() + "/1SecApp/dd.mp4";
+            String video5 = Environment.getExternalStorageDirectory() + "/1SecApp/ee.mp4";
+            String video6 = Environment.getExternalStorageDirectory() + "/1SecApp/gg.mp4";
+            String video7 = Environment.getExternalStorageDirectory() + "/1SecApp/hh.mp4";
+            String video8 = Environment.getExternalStorageDirectory() + "/1SecApp/ff.mp4";
 
+            String video9 = Environment.getExternalStorageDirectory() + "/1SecApp/ii.mp4";
+
+            Log.d("Button Disabled", "in onclick video1 == " + video1);
+            String[] videos = new String[]{video1, video2,video3,video4,video5,video6,video7,video8,video1,video2,video9};
+            try {
+                appendVideo(videos);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
         }
         else
@@ -165,6 +197,47 @@ public Button merge;
 
 
 
+    }
+
+    private String appendVideo(String[] videos) throws IOException{
+        Log.v(TAG, "in appendVideo() videos length is " + videos.length);
+        Movie[] inMovies = new Movie[videos.length];
+        int index = 0;
+        for(String video: videos)
+        {
+            Log.i(TAG, "    in appendVideo one video path = " + video);
+            inMovies[index] = MovieCreator.build(video);
+            index++;
+        }
+        List<Track> videoTracks = new LinkedList<Track>();
+        List<Track> audioTracks = new LinkedList<Track>();
+        for (Movie m : inMovies) {
+            for (Track t : m.getTracks()) {
+                if (t.getHandler().equals("soun")) {
+                    audioTracks.add(t);
+                }
+                if (t.getHandler().equals("vide")) {
+                    videoTracks.add(t);
+                }
+            }
+        }
+
+        Movie result = new Movie();
+        Log.v(TAG, "audioTracks size = " + audioTracks.size()
+                + " videoTracks size = " + videoTracks.size());
+        if (audioTracks.size() > 0) {
+            result.addTrack(new AppendTrack(audioTracks.toArray(new Track[audioTracks.size()])));
+        }
+        if (videoTracks.size() > 0) {
+            result.addTrack(new AppendTrack(videoTracks.toArray(new Track[videoTracks.size()])));
+        }
+        String videoCombinePath = RecordUtil.createFinalPath(MainActivity.this);
+        Container out = new DefaultMp4Builder().build(result);
+        FileChannel fc = new RandomAccessFile(videoCombinePath, "rw").getChannel();
+        out.writeContainer(fc);
+        fc.close();
+        Log.v(TAG, "after combine videoCombinepath = " + videoCombinePath);
+        return videoCombinePath;
     }
 
     public void surfaceCreated(SurfaceHolder holder) {
