@@ -53,8 +53,8 @@ private Mp4ParserWrapper mp4ParserWrapper;
     boolean usecamera = true;
     boolean previewRunning = false;
     public int fileCheck;
-    int count =0;
-
+    public int totalNumFiles;
+    File directory;
 public Button merge;
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -70,7 +70,9 @@ public Button merge;
         WindowManager.LayoutParams lp = getWindow().getAttributes();
         lp.screenBrightness = 1000;
         getWindow().setAttributes(lp);
-
+         directory = new File(Environment.getExternalStorageDirectory()+File.separator+"1SecApp");
+        if(!directory.exists())
+            directory.mkdirs();
         camcorderProfile = CamcorderProfile.get(CamcorderProfile.QUALITY_HIGH);
 
 
@@ -107,23 +109,21 @@ public Button merge;
         // This is all very sloppy
        // if (camcorderProfile.fileFormat == MediaRecorder.OutputFormat.MPEG_4)
         {
-            try {
-                fileCheck++;
-                File directory = new File(Environment.getExternalStorageDirectory()+File.separator+"1SecApp");
-                if(!directory.exists())
-                    directory.mkdirs();
+            fileCheck++;
 
 //                File newFile = File.createTempFile("videocapture"+fileCheck, ".mp4", Environment.getExternalStorageDirectory()+"");
 
-                File newFile = File.createTempFile("videocapture"+fileCheck, ".mp4", directory);
+            totalNumFiles = directory.listFiles().length;
+            Log.d("hr", String.valueOf(totalNumFiles));
+            File newFile =new File(directory,totalNumFiles+".mp4");
 
-                // recorder.setVideoFrameRate(100);
-                recorder.setOutputFile(newFile.getAbsolutePath());
-            } catch (IOException e) {
-                Log.v(LOGTAG,"Couldn't create file");
-                e.printStackTrace();
-                finish();
-            }
+
+
+
+
+
+            // recorder.setVideoFrameRate(100);
+            recorder.setOutputFile(newFile.getPath());
         }
         //recorder.setMaxDuration(50000); // 50 seconds
         //recorder.setMaxFileSize(5000000); // Approximately 5 megabytes
@@ -147,7 +147,15 @@ public Button merge;
         {
 
             Log.d("Button Disabled", "you click textview");
-            String video1 = Environment.getExternalStorageDirectory() + "/1SecApp/aa.mp4";
+            totalNumFiles = directory.listFiles().length;
+            Log.d("hr merge", String.valueOf(totalNumFiles));
+            String[] movie = new String[totalNumFiles];
+
+            for(int i=0;i<totalNumFiles;i++)
+            {
+                movie[i]=Environment.getExternalStorageDirectory() + "/1SecApp/" + i+".mp4";
+            }
+           /* String video1 = Environment.getExternalStorageDirectory() + "/1SecApp/aa.mp4";
             String video2 = Environment.getExternalStorageDirectory() + "/1SecApp/bb.mp4";
             String video3 = Environment.getExternalStorageDirectory() + "/1SecApp/cc.mp4";
             String video4 = Environment.getExternalStorageDirectory() + "/1SecApp/dd.mp4";
@@ -157,11 +165,11 @@ public Button merge;
             String video8 = Environment.getExternalStorageDirectory() + "/1SecApp/ff.mp4";
 
             String video9 = Environment.getExternalStorageDirectory() + "/1SecApp/ii.mp4";
-
-            Log.d("Button Disabled", "in onclick video1 == " + video1);
-            String[] videos = new String[]{video1, video2,video3,video4,video5,video6,video7,video8,video1,video2,video9};
+*/
+           // Log.d("Button Disabled", "in onclick video1 == " + movie);
+        //    String[] videos = new String[]{video1, video2,video3,video4,video5,video6,video7,video8,video1,video2,video9};
             try {
-                appendVideo(videos);
+                appendVideo(movie);
             } catch (IOException e) {
                 e.printStackTrace();
             }
